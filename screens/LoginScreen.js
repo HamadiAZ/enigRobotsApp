@@ -11,7 +11,7 @@ const auth = getAuth();
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState("exemple@Ex.com");
-  const [password, setPassword] = useState("password");
+  const [password, setPassword] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
 
   async function login() {

@@ -4,12 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { userAuth } from "../components/userAuth";
 import { useNavigation } from "@react-navigation/native";
 import { themeColors } from "../theme";
-import { signOut, getAuth } from "firebase/auth";
-const auth = getAuth();
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const { user } = userAuth();
+  const user = userAuth();
   console.log(user?.displayName);
   console.log(user?.photoURL);
   console.log(user?.email);
@@ -29,7 +27,7 @@ export default function HomeScreen() {
           <Image source={require("../assets/images/bg.png")} style={{ width: 500, height: 200 }} />
         </View>
         <Text className="text-white font-bold text-2xl text-center my-7">
-          welcome to our 4.0th edition !
+          welcome {user?.email} ! {user?.displayName}
         </Text>
         <Text className="text-white font-bold text-l text-center ">About Us</Text>
         <Text>Home Screen {user?.email}</Text>
