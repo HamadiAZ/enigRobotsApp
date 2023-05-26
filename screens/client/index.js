@@ -1,12 +1,21 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-import React from "react";
+import { View, Text, Image, TouchableOpacity, ScrollView, BackHandler } from "react-native";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
+import { userAuth } from "../../components/userAuth";
 
 export default function Index() {
-  //const { user } = userAuth();
+  const user = userAuth();
   const navigation = useNavigation();
+  useEffect(() => {
+    const backAction = () => {
+      console.log("pressed back");
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () => backHandler.remove(); // Clean up the event listener
+  }, []);
   return (
     <SafeAreaView className="flex flex-1" style={{ backgroundColor: themeColors.bg }}>
       <ScrollView>
@@ -16,8 +25,10 @@ export default function Index() {
             style={{ width: 500, height: 200 }}
           />
         </View>
-        <Text className="text-white font-bold text-2xl text-center my-7">welcome USER !!!!</Text>
-        <Text className="text-white font-bold text-l text-center ">About Us</Text>
+        <Text className="text-white font-bold text-2xl text-center my-7">
+          welcome {user?.email} ! {user?.displayName}
+        </Text>
+        <Text className="text-white font-bold text-l text-center ">register your robot now </Text>
         <Text className="text-white text-m p-3" style={{ height: 300 }}>
           ENIGROBOTs is an innovative event organized by The National Engineering School of Gabes
           with intention to promote the quality of research in the field of technology in Tunisia.

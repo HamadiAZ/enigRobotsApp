@@ -1,17 +1,19 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Image, TextInput, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import { themeColors } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeftIcon, Line } from "react-native-heroicons/solid";
+import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import KeyboardAvoidingComponent from "../components/keyboardWrap";
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+
 const auth = getAuth();
 
 const imageLink =
   "https://media.licdn.com/dms/image/C4E03AQHADVRP7OML1w/profile-displayphoto-shrink_800_800/0/1642982063201?e=2147483647&v=beta&t=s_85jvwNiLw6RWT8TE8SvQtbEo_6znuNsJg7bUjVzpI";
 
 export default function SignUpScreen() {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("exemple@Ex.com");
   const [password, setPassword] = useState("password");
   const [name, setName] = useState("name");
@@ -27,6 +29,8 @@ export default function SignUpScreen() {
       navigation.navigate("Login");
     } catch (error) {
       setValidationMessage(error.message);
+    } finally {
+      setLoading(false);
     }
   }
   const navigation = useNavigation();
@@ -79,12 +83,16 @@ export default function SignUpScreen() {
               onChangeText={(text) => setPassword(text)}
             />
             <Text className="text-gray-500 font-semibold">{validationMessage}</Text>
-            <TouchableOpacity
-              className="py-3 bg-blue-950 rounded-xl"
-              onPress={() => createAccount()}
-            >
-              <Text className="font-xl font-bold text-center text-white">Sign Up</Text>
-            </TouchableOpacity>
+            {loading ? (
+              <ActivityIndicator className="py-3 bg-blue-950 rounded-xl" />
+            ) : (
+              <TouchableOpacity
+                className="py-3 bg-blue-950 rounded-xl"
+                onPress={() => createAccount()}
+              >
+                <Text className="font-xl font-bold text-center text-white">Sign Up</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View className="flex-row justify-center mt-7">

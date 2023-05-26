@@ -5,6 +5,7 @@ import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { userAuth } from "../components/userAuth";
 
 const auth = getAuth();
 
@@ -13,6 +14,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("exemple@Ex.com");
   const [password, setPassword] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
+  const user = userAuth();
 
   async function login() {
     if (email === "" || password === "") {
@@ -22,11 +24,12 @@ export default function LoginScreen() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Home");
+      navigation.navigate("Client");
     } catch (error) {
       setValidationMessage(error.message);
     }
   }
+
   return (
     <View className="flex-1 bg-white" style={{ backgroundColor: themeColors.bg }}>
       <SafeAreaView className="flex ">
