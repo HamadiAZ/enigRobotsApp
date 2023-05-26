@@ -3,15 +3,18 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
-import { addToDb, getData, getDataById, updateData } from "../functions";
+import { addToDb, getData, getDataById, updateData, updatePaymentStatus } from "../functions";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
   const [items, setItems] = useState(undefined);
 
-  //console.log("itemmms : ", items);
+  console.log("itemmms : ", items);
   useEffect(() => {
-    updateData("testpath", 123, { id: "123", name: "gabes", payment: true, phone: 93111241 });
+    //getSIngle("testpath", 123);
+    getDataById("testpath", 123, setItems);
+    updatePaymentStatus("testpath", 123, true);
+    getDataById("testpath", 123, setItems);
   }, []);
 
   return (
