@@ -1,12 +1,5 @@
 import db from "./fireBaseCfg";
-import { doc, setDoc, collection, query, onSnapshot } from "firebase/firestore";
-//import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from 'firebase/firestore';
-// export async function getData(collection) {
-//   const cols = collection(db, collection);
-//   const snapShot = await getDocs(cols);
-//   const dataList = snapShot.docs.map((doc) => doc.data());
-//   return dataList;
-// }
+import { doc, setDoc, collection, updateDoc, onSnapshot } from "firebase/firestore";
 
 export async function addToDb(path, Data) {
   // usage : mithel path = users , data={id:1,username:"test",pw:"123"}
@@ -16,12 +9,7 @@ export async function addToDb(path, Data) {
     console.error("There was an error adding data to db:", error);
   }
 }
-const data = {
-  id: 1234344,
-  name: "gabes",
-  phone: 931112551,
-  payment: true,
-};
+
 export async function getData(path, setFn) {
   // usage : mithel path = users , setStateFunction
   //RETURN OBJ
@@ -55,4 +43,14 @@ export async function getDataById(path, parameterId, setFn) {
     console.error("There was an error adding data to db:", error);
   }
 }
-// addToDb("testpath", data);
+
+export async function updateData(path, parameterId, newData) {
+  // usage : mithel path = users, id=1000 , newDataSameAsBefore
+  //RETURN OBJ
+  try {
+    const messageDocRef = doc(db, path + "/" + parameterId);
+    updateDoc(messageDocRef, newData);
+  } catch (error) {
+    console.error("There was an error adding data to db:", error);
+  }
+}

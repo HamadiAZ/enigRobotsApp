@@ -9,9 +9,9 @@ export default function WelcomeScreen() {
   const navigation = useNavigation();
   const [items, setItems] = useState(undefined);
 
-  console.log("itemmms : ", items);
+  //console.log("itemmms : ", items);
   useEffect(() => {
-    getDataById("testpath", 123, setItems);
+    updateData("testpath", 123, { id: "123", name: "gabes", payment: true, phone: 93111241 });
   }, []);
 
   return (
