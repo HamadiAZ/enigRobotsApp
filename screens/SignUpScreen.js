@@ -23,6 +23,7 @@ export default function SignUpScreen() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, {
+        role: "client",
         displayName: name,
         photoURL: imageLink,
       });

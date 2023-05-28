@@ -9,14 +9,14 @@ import SignUpScreen from "../screens/SignUpScreen";
 import Client from "../screens/client";
 import RobotPayment from "../screens/client/RobotPayment";
 const Stack = createNativeStackNavigator();
-//<Stack.Screen name="Welcome" options={{ headerShown: false }} component={WelcomeScreen} />
+//
 export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
         <Stack.Screen name="Client" options={{ headerShown: false }} component={Client} />
         <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeScreen} />
-        <Stack.Screen name="Welcome" options={{ headerShown: false }} component={Client} />
+        <Stack.Screen name="Welcome" options={{ headerShown: false }} component={WelcomeScreen} />
         <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
         <Stack.Screen name="SignUp" options={{ headerShown: false }} component={SignUpScreen} />
         <Stack.Screen

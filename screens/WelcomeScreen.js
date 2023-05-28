@@ -7,15 +7,8 @@ import { addToDb, getData, getDataById, updateData, updatePaymentStatus } from "
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
-  const [items, setItems] = useState(undefined);
 
-  console.log("itemmms : ", items);
-  useEffect(() => {
-    //getSIngle("testpath", 123);
-    getDataById("testpath", 123, setItems);
-    updatePaymentStatus("testpath", 123, true);
-    getDataById("testpath", 123, setItems);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <SafeAreaView className="flex flex-1" style={{ backgroundColor: themeColors.bg }}>
