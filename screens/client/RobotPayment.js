@@ -43,7 +43,7 @@ export default function RobotPayment({ route }) {
   const [paymentMethod, setPaymentMethod] = useState(
     !!paymentInfo ? paymentInfo?.paymentMethod : ""
   );
-  console.log(paymentInfo);
+  //console.log(paymentInfo);
   //   {"Rname": "testname",
   //   "chef": "hamadk",
   //   "club": "aoe",
