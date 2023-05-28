@@ -15,7 +15,10 @@ import { signUserOut, userAuth } from "../../components/userAuth";
 import RobotGallery from "../../components/RobotGallery";
 import { getData } from "../../functions";
 import UserRobots from "./UserRobots";
-export default function Index() {
+
+export default function Index({ route }) {
+  let updateData = undefined;
+  if (route != undefined) updateData = route.params;
   const user = userAuth();
   const navigation = useNavigation();
   const [robotList, setRobotList] = useState([]);
@@ -36,7 +39,7 @@ export default function Index() {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => backHandler.remove(); // Clean up the event listener
   }, [user]);
-  console.log(robotList);
+  //console.log(updateData);
   return (
     <SafeAreaView className="flex flex-1" style={{ backgroundColor: themeColors.bg }}>
       <ScrollView>
@@ -61,11 +64,11 @@ export default function Index() {
         </Text>
         <ScrollView>
           {robotList.map((a) => {
-            uid = a.uid;
+            robotId = a.id;
             paymentInfo = paymentList.filter((item) => {
-              item?.uid == uid ? true : false;
+              return item?.robotId == robotId ? true : false;
             });
-            return <UserRobots key={a.type} data={a} paymentInfo={paymentInfo} />;
+            return <UserRobots key={a.type} data={a} paymentInfo={paymentInfo[0]} />;
           })}
         </ScrollView>
         <View className="space-y-4">

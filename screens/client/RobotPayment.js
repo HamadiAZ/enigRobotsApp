@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import KeyboardAvoidingComponent from "../../components/keyboardWrap";
 
 import robots from "../../constants";
-import { updateData, getDataById } from "../../functions";
+import { updateData, addToDb } from "../../functions";
 import { userAuth } from "../../components/userAuth";
 
 const imageLink =
@@ -25,7 +25,7 @@ const imageLink =
 export default function RobotPayment({ route }) {
   const user = userAuth();
   const { data, paymentInfo } = route.params;
-  //console.log(data);
+  const triedPayingBefore = !!paymentInfo;
   const [loading, setLoading] = useState(false);
   const [Rname, setRname] = useState(data.Rname);
   const [type, setType] = useState(data.type);
@@ -43,7 +43,7 @@ export default function RobotPayment({ route }) {
   const [paymentMethod, setPaymentMethod] = useState(
     !!paymentInfo ? paymentInfo?.paymentMethod : ""
   );
-
+  console.log(paymentInfo);
   //   {"Rname": "testname",
   //   "chef": "hamadk",
   //   "club": "aoe",
@@ -65,6 +65,7 @@ export default function RobotPayment({ route }) {
     condition ? setValidationMessage("required filled missing") : "";
     if (!condition) {
       try {
+        moveToClient = true;
         robotData = {
           id: data.id,
           Rname,
@@ -87,8 +88,25 @@ export default function RobotPayment({ route }) {
           uid: user.uid,
         };
         await updateData("robots", robotData.id, robotData);
-        await addToDb("payments", paymentData);
-        navigation.navigate("Client");
+        if (triedPayingBefore) {
+          await updateData("payments", robotData.id, paymentData);
+        } else {
+          if (paymentId !== "" && paymentId.length >= 8) {
+            await addToDb("payments", paymentData, robotData.id);
+            moveToClient = false;
+            navigation.navigate("Client", { updateData: true });
+          } else if (paymentId == "") {
+            setValidationMessage("Payment not set, updating robot info only");
+            moveToClient = false;
+            setTimeout(() => {
+              navigation.navigate("Client");
+            }, 2000);
+          } else {
+            setValidationMessage("Payment id is not accepted");
+            moveToClient = false;
+          }
+        }
+        moveToClient && navigation.navigate("Client");
       } catch (error) {
         setValidationMessage(error.message);
       } finally {
@@ -141,7 +159,7 @@ export default function RobotPayment({ route }) {
             </Text>
             <Text className="text-gray-700 ml-4">payment Reference</Text>
             <Picker
-              selectedValue={type}
+              selectedValue={paymentMethod}
               style={{ height: 50, width: 320 }}
               onValueChange={(itemValue) => {
                 setPaymentMethod(itemValue);
@@ -150,6 +168,9 @@ export default function RobotPayment({ route }) {
               <Picker.Item label="D17" value="D17" />
               <Picker.Item label="Mondat" value="Mondat" />
             </Picker>
+            {paymentMethod === "D17" && (
+              <Text className="text-red-700 text font-extrabold ml-4">D17 number : 93111251</Text>
+            )}
             <Text className="text-gray-700 ml-4">Robot type</Text>
             <Picker
               selectedValue={type}
