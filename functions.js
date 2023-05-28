@@ -1,10 +1,13 @@
 import db from "./fireBaseCfg";
 import { doc, setDoc, getDoc, collection, updateDoc, onSnapshot } from "firebase/firestore";
 
-export async function addToDb(path, Data) {
+export async function addToDb(path, Data, id) {
   // usage : mithel path = users , data={id:1,username:"test",pw:"123"}
+  // if id is given , it will take it as id
   try {
-    await setDoc(doc(db, path + "/" + Data.id), Data);
+    id == undefined
+      ? await setDoc(doc(db, path + "/" + Data.id), Data)
+      : await setDoc(doc(db, path + "/" + id), Data);
   } catch (error) {
     console.error("There was an error adding data to db:", error);
   }
