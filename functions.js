@@ -10,17 +10,27 @@ export async function addToDb(path, Data) {
   }
 }
 
-export async function getData(path, setFn) {
+export async function getData(path, setFn, filterDict) {
   // usage : mithel path = users , setStateFunction
+  // filterDict optional , si utilisé { base :"uuid",value:"1342fzefze341"}
   //RETURN OBJ
   try {
     const ref = collection(db, path);
     await onSnapshot(ref, (dataSnap) => {
-      const Data = dataSnap.docs.map((doc) => {
+      let Data = dataSnap.docs.map((doc) => {
         return { id: doc.id, ...doc.data() };
       });
       //console.log("Current groups in database: ", Data);
-      setFn(Data);
+      if (filterDict === undefined) setFn(Data);
+      else {
+        //console.log(Data);
+        Data = Data.filter((item) => {
+          filterBase = filterDict.base;
+          filterValue = filterDict.value;
+          return item[filterBase] == filterValue;
+        });
+        setFn(Data);
+      }
     });
   } catch (error) {
     console.error("There was an error adding data to db:", error);

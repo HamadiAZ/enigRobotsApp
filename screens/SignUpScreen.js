@@ -34,6 +34,7 @@ export default function SignUpScreen() {
     }
   }
   const navigation = useNavigation();
+  console.log("false place");
   return (
     <KeyboardAvoidingComponent>
       <View className="flex-1 bg-white " style={{ backgroundColor: themeColors.bg }}>

@@ -1,21 +1,42 @@
-import { View, Text, Image, TouchableOpacity, ScrollView, BackHandler } from "react-native";
-import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  BackHandler,
+  ScrollViewBase,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
-import { userAuth } from "../../components/userAuth";
-
+import { signUserOut, userAuth } from "../../components/userAuth";
+import RobotGallery from "../../components/RobotGallery";
+import { getData } from "../../functions";
+import UserRobots from "./UserRobots";
 export default function Index() {
   const user = userAuth();
   const navigation = useNavigation();
+  const [robotList, setRobotList] = useState([]);
+  const [paymentList, setPaymentList] = useState([]);
+
+  async function getCurrentUserRobotList() {
+    if (user !== undefined) {
+      await getData("robots", setRobotList, { base: "uid", value: user.uid });
+      await getData("payments", setPaymentList, { base: "uid", value: user.uid });
+    }
+  }
   useEffect(() => {
+    getCurrentUserRobotList();
     const backAction = () => {
       console.log("pressed back");
       return true;
     };
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => backHandler.remove(); // Clean up the event listener
-  }, []);
+  }, [user]);
+  console.log(robotList);
   return (
     <SafeAreaView className="flex flex-1" style={{ backgroundColor: themeColors.bg }}>
       <ScrollView>
@@ -26,43 +47,37 @@ export default function Index() {
           />
         </View>
         <Text className="text-white font-bold text-2xl text-center my-7">
-          welcome {user?.email} ! {user?.displayName}
+          welcome {user?.displayName} !
         </Text>
-        <Text className="text-white font-bold text-l text-center ">register your robot now </Text>
-        <Text className="text-white text-m p-3" style={{ height: 300 }}>
-          ENIGROBOTs is an innovative event organized by The National Engineering School of Gabes
-          with intention to promote the quality of research in the field of technology in Tunisia.
-          This event is an assembly of students coming to win the challenge using their wits and
-          spirits. It is a place to exchange knowledge, make memories ,form long lasting bonds of
-          friendship and also have the opportunity to cooperate with teams from other establishments
-          for future projects. A one day challenge full of surprises for attendants and prices for
-          champions
+        <Text className="text-white font-bold text-l text-center mb-4">
+          register your robot now
         </Text>
-        <Text className="text-white text-m p-3" style={{ height: 300 }}>
-          ENIGROBOTs is an innovative event organized by The National Engineering School of Gabes
-          with intention to promote the quality of research in the field of technology in Tunisia.
-          This event is an assembly of students coming to win the challenge using their wits and
-          spirits. It is a place to exchange knowledge, make memories ,form long lasting bonds of
-          friendship and also have the opportunity to cooperate with teams from other establishments
-          for future projects. A one day challenge full of surprises for attendants and prices for
-          champions
+
+        {robots.map((a) => {
+          return <RobotGallery key={a.type} data={a} />;
+        })}
+        <Text className="text-white text-l font-bold p-3 mx-3 my-4">
+          Check your inscriptions below :
         </Text>
-        <Text className="text-white text-m p-3" style={{ height: 300 }}>
-          ENIGROBOTs is an innovative event organized by The National Engineering School of Gabes
-          with intention to promote the quality of research in the field of technology in Tunisia.
-          This event is an assembly of students coming to win the challenge using their wits and
-          spirits. It is a place to exchange knowledge, make memories ,form long lasting bonds of
-          friendship and also have the opportunity to cooperate with teams from other establishments
-          for future projects. A one day challenge full of surprises for attendants and prices for
-          champions
-        </Text>
+        <ScrollView>
+          {robotList.map((a) => {
+            uid = a.uid;
+            paymentInfo = paymentList.filter((item) => {
+              item?.uid == uid ? true : false;
+            });
+            return <UserRobots key={a.type} data={a} paymentInfo={paymentInfo} />;
+          })}
+        </ScrollView>
         <View className="space-y-4">
           <TouchableOpacity
-            onPress={() => navigation.navigate("SignUp")}
+            onPress={() => {
+              signUserOut();
+              navigation.navigate("Home");
+            }}
             className="py-3  mx-7 rounded-xl"
             style={{ backgroundColor: themeColors.logo }}
           >
-            <Text className="text-xl font-bold text-center text-white">Sign Up</Text>
+            <Text className="text-xl font-bold text-center text-white">Sign Out</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -2,7 +2,9 @@ import React from "react";
 import "../fireBaseCfg";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const auth = getAuth();
-
+export function signUserOut() {
+  signOut(auth);
+}
 export function userAuth() {
   const [user, setUser] = React.useState();
 
