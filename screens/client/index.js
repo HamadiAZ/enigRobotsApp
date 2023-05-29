@@ -57,7 +57,7 @@ export default function Index({ route }) {
         </Text>
 
         {robots.map((a) => {
-          return <RobotGallery key={a.type} data={a} />;
+          return <RobotGallery key={a.id} data={a} />;
         })}
         <Text className="text-white text-l font-bold p-3 mx-3 my-4">
           {robotList.length > 0
