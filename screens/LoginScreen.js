@@ -7,29 +7,30 @@ import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { userAuth } from "../components/userAuth";
 
-const auth = getAuth();
-
 export default function LoginScreen() {
+  const auth = getAuth();
   const navigation = useNavigation();
-  const [email, setEmail] = useState("exemple@Ex.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
-  const user = userAuth();
 
   async function login() {
     if (email === "" || password === "") {
       setValidationMessage("required fields missing");
       return;
     }
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Client");
+      user = getAuth().currentUser;
+
+      setTimeout(() => {
+        if (user?.photoURL == "admin") navigation.navigate("Admin");
+        else navigation.navigate("Client");
+      }, 2000);
     } catch (error) {
       setValidationMessage(error.message);
     }
   }
-
   return (
     <View className="flex-1 bg-white" style={{ backgroundColor: themeColors.bg }}>
       <SafeAreaView className="flex ">

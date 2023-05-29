@@ -3,12 +3,9 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
-import { addToDb, getData, getDataById, updateData, updatePaymentStatus } from "../functions";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
-
-  useEffect(() => {}, []);
 
   return (
     <SafeAreaView className="flex flex-1" style={{ backgroundColor: themeColors.bg }}>

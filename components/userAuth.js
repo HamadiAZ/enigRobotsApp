@@ -1,6 +1,6 @@
 import React from "react";
 import "../fireBaseCfg";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 const auth = getAuth();
 export function signUserOut() {
   signOut(auth);
@@ -19,7 +19,6 @@ export function userAuth() {
         setUser(undefined);
       }
     });
-
     return unsubscribeFromAuthStatusChanged;
   }, []);
 

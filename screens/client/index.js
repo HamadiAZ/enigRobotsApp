@@ -39,7 +39,7 @@ export default function Index({ route }) {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => backHandler.remove(); // Clean up the event listener
   }, [user]);
-  //console.log(updateData);
+
   return (
     <SafeAreaView className="flex flex-1" style={{ backgroundColor: themeColors.bg }}>
       <ScrollView>
@@ -60,7 +60,9 @@ export default function Index({ route }) {
           return <RobotGallery key={a.type} data={a} />;
         })}
         <Text className="text-white text-l font-bold p-3 mx-3 my-4">
-          Check your inscriptions below :
+          {robotList.length > 0
+            ? "Check your inscriptions below :"
+            : "You have no subscriptions, please choose robot category from above"}
         </Text>
         <ScrollView>
           {robotList.map((a) => {
@@ -68,14 +70,14 @@ export default function Index({ route }) {
             paymentInfo = paymentList.filter((item) => {
               return item?.robotId == robotId ? true : false;
             });
-            return <UserRobots key={a.type} data={a} paymentInfo={paymentInfo[0]} />;
+            return <UserRobots key={a.robotId} data={a} paymentInfo={paymentInfo[0]} />;
           })}
         </ScrollView>
         <View className="space-y-4">
           <TouchableOpacity
             onPress={() => {
               signUserOut();
-              navigation.navigate("Home");
+              navigation.navigate("Welcome");
             }}
             className="py-3  mx-7 rounded-xl"
             style={{ backgroundColor: themeColors.logo }}

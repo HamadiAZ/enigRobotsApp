@@ -2,7 +2,12 @@ import { View, Text, Image, TouchableOpacity, ImageBackground, BackHandler } fro
 import React from "react";
 import { themeColors } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
-export default function UserRobots({ data, paymentInfo, getCurrentUserRobotList }) {
+export default function UserRobots({
+  data,
+  paymentInfo,
+  getCurrentUserRobotList,
+  navigationEvent = "RobotPayment",
+}) {
   const navigation = useNavigation();
   images = {
     fighter: require("../../assets/images/death.png"),
@@ -21,8 +26,7 @@ export default function UserRobots({ data, paymentInfo, getCurrentUserRobotList 
     >
       <TouchableOpacity
         onPress={() => {
-          !data.payment &&
-            navigation.navigate("RobotPayment", { data, paymentInfo, getCurrentUserRobotList });
+          navigation.navigate(navigationEvent, { data, paymentInfo, getCurrentUserRobotList });
         }}
         style={{ height: 200, width: "100%" }}
       >

@@ -16,38 +16,42 @@ import { useNavigation } from "@react-navigation/native";
 import KeyboardAvoidingComponent from "../../components/keyboardWrap";
 
 import robots from "../../constants";
-import { addToDb } from "../../functions";
-import { userAuth } from "../../components/userAuth";
+import { updateData, addToDb } from "../../functions";
 
 const imageLink =
   "https://media.licdn.com/dms/image/C4E03AQHADVRP7OML1w/profile-displayphoto-shrink_800_800/0/1642982063201?e=2147483647&v=beta&t=s_85jvwNiLw6RWT8TE8SvQtbEo_6znuNsJg7bUjVzpI";
 
-export default function RobotRegistration({ route }) {
-  const user = userAuth();
-  const { data } = route.params;
-  //console.log(data);
+export default function RobotCheck({ route }) {
+  const { data, paymentInfo } = route.params;
+  const triedPayingBefore = !!paymentInfo;
   const [loading, setLoading] = useState(false);
-  const [Rname, setRname] = useState("");
+  const [Rname, setRname] = useState(data.Rname);
   const [type, setType] = useState(data.type);
   const [price, setPrice] = useState(data.price);
-  const [university, setUniversity] = useState("");
-  const [club, setClub] = useState("");
-  const [email, setEmail] = useState("");
-  const [chef, setChef] = useState("");
-  const [phone, setPhone] = useState("");
-  const [member1, setMember1] = useState("");
-  const [member2, setMember2] = useState("");
+  const [university, setUniversity] = useState(data.university);
+  const [club, setClub] = useState(data.club);
+  const [email, setEmail] = useState(data.email);
+  const [chef, setChef] = useState(data.chef);
+  const [phone, setPhone] = useState(data.phone);
+  const [member1, setMember1] = useState(data.member1);
+  const [member2, setMember2] = useState(data.member2);
+  const [payment, setPayment] = useState(data.payment);
   const [validationMessage, setValidationMessage] = useState("");
+  const [paymentId, setPaymentId] = useState(!!paymentInfo ? paymentInfo?.paymentId : "");
+  const [paymentMethod, setPaymentMethod] = useState(
+    !!paymentInfo ? paymentInfo?.paymentMethod : ""
+  );
 
-  async function registerRobot() {
+  async function updateRobot(paymentStatus = undefined) {
     condition =
       Rname === "" || club === "" || email === "" || chef === "" || email === "" || phone === "";
 
     condition ? setValidationMessage("required filled missing") : "";
     if (!condition) {
       try {
+        moveToClient = true;
         robotData = {
-          id: phone + (Math.floor(Math.random() * Math.random() * Math.random() * 1000000) + 1),
+          id: data.id,
           Rname,
           price,
           type,
@@ -58,11 +62,35 @@ export default function RobotRegistration({ route }) {
           phone,
           member1,
           member2,
-          payment: false,
-          uid: user.uid,
+          payment: paymentStatus == undefined ? payment : paymentStatus,
+          uid: data.uid,
         };
-        await addToDb("robots", robotData);
-        navigation.navigate("Client");
+        paymentData = {
+          paymentId,
+          robotId: robotData.id,
+          paymentMethod,
+          uid: data.uid,
+        };
+        await updateData("robots", robotData.id, robotData);
+        if (triedPayingBefore) {
+          await updateData("payments", robotData.id, paymentData);
+        } else {
+          if (paymentId !== "" && paymentId.length >= 8) {
+            await addToDb("payments", paymentData, robotData.id);
+            moveToClient = false;
+            navigation.navigate("Admin", { updateData: true });
+          } else if (paymentId == "") {
+            setValidationMessage("Payment not set, updating robot info only");
+            moveToClient = false;
+            setTimeout(() => {
+              navigation.navigate("Admin");
+            }, 2000);
+          } else {
+            setValidationMessage("Payment id is not accepted");
+            moveToClient = false;
+          }
+        }
+        moveToClient && navigation.navigate("Admin");
       } catch (error) {
         setValidationMessage(error.message);
       } finally {
@@ -92,6 +120,25 @@ export default function RobotRegistration({ route }) {
           style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
         >
           <ScrollView className="form space-y-2">
+            {payment ? (
+              <TouchableOpacity
+                className="py-3 bg-red-500 rounded-xl mb-2"
+                onPress={() => {
+                  updateRobot(false);
+                }}
+              >
+                <Text className="font-xl font-bold text-center text-white">Mark as NOT PAID</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                className="py-3 bg-green-500 rounded-xl mb-2"
+                onPress={() => {
+                  updateRobot(true);
+                }}
+              >
+                <Text className="font-xl font-bold text-center text-white">Mark as PAID</Text>
+              </TouchableOpacity>
+            )}
             <Text className="text-gray-700 ml-4">Robot name</Text>
             <TextInput
               className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
@@ -99,6 +146,30 @@ export default function RobotRegistration({ route }) {
               placeholder="Enter Name"
               onChangeText={(text) => setRname(text)}
             />
+            <Text className="text-gray-700 ml-4">payment Reference</Text>
+            <TextInput
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl -mb-2"
+              value={paymentId}
+              placeholder=""
+              onChangeText={(text) => setPaymentId(text)}
+            />
+            <Text className="text-gray-700 mb-5 ml-4">
+              *if not yet payed, just ignore this case
+            </Text>
+            <Text className="text-gray-700 ml-4">payment Reference</Text>
+            <Picker
+              selectedValue={paymentMethod}
+              style={{ height: 50, width: 320 }}
+              onValueChange={(itemValue) => {
+                setPaymentMethod(itemValue);
+              }}
+            >
+              <Picker.Item label="D17" value="D17" />
+              <Picker.Item label="Mondat" value="Mondat" />
+            </Picker>
+            {paymentMethod === "D17" && (
+              <Text className="text-red-700 text font-extrabold ml-4">D17 number : 93111251</Text>
+            )}
             <Text className="text-gray-700 ml-4">Robot type</Text>
             <Picker
               selectedValue={type}
@@ -114,7 +185,7 @@ export default function RobotRegistration({ route }) {
             </Picker>
             <View className="flex flex-row">
               <Text className="text-gray-700 ml-4">Price :</Text>
-              <Text className="text-red-600 ml-4 font-extrabold">{price}</Text>
+              <Text className="text-red-600 ml-4 font-extrabold">{price} DT</Text>
             </View>
             <Text className="text-gray-700 ml-4">Team leader name</Text>
             <TextInput
@@ -171,9 +242,9 @@ export default function RobotRegistration({ route }) {
             ) : (
               <TouchableOpacity
                 className="py-3 bg-blue-950 rounded-xl mb-11"
-                onPress={() => registerRobot()}
+                onPress={() => updateRobot()}
               >
-                <Text className="font-xl font-bold text-center text-white">Register robot</Text>
+                <Text className="font-xl font-bold text-center text-white">Update</Text>
               </TouchableOpacity>
             )}
           </ScrollView>

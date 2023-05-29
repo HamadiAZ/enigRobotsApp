@@ -9,23 +9,19 @@ import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase
 
 const auth = getAuth();
 
-const imageLink =
-  "https://media.licdn.com/dms/image/C4E03AQHADVRP7OML1w/profile-displayphoto-shrink_800_800/0/1642982063201?e=2147483647&v=beta&t=s_85jvwNiLw6RWT8TE8SvQtbEo_6znuNsJg7bUjVzpI";
-
 export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("exemple@Ex.com");
-  const [password, setPassword] = useState("password");
-  const [name, setName] = useState("name");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
   async function createAccount() {
     email === "" || password === "" ? setValidationMessage("required filled missing") : "";
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, {
-        role: "client",
         displayName: name,
-        photoURL: imageLink,
+        photoURL: "user",
       });
       navigation.navigate("Login");
     } catch (error) {
@@ -35,7 +31,6 @@ export default function SignUpScreen() {
     }
   }
   const navigation = useNavigation();
-  console.log("false place");
   return (
     <KeyboardAvoidingComponent>
       <View className="flex-1 bg-white " style={{ backgroundColor: themeColors.bg }}>
