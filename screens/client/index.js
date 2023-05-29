@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  BackHandler,
-  ScrollViewBase,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, BackHandler } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { themeColors } from "../../theme";
@@ -30,14 +22,15 @@ export default function Index({ route }) {
       await getData("payments", setPaymentList, { base: "uid", value: user.uid });
     }
   }
+
   useEffect(() => {
     getCurrentUserRobotList();
-    const backAction = () => {
-      console.log("pressed back");
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
-    return () => backHandler.remove(); // Clean up the event listener
+    // const backAction = () => {
+    //   console.log("blocked back");
+    //   return true;
+    // };
+    // backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    // return () => backHandler.remove(); // Clean up the event listener
   }, [user]);
 
   return (
@@ -56,8 +49,8 @@ export default function Index({ route }) {
           register your robot now
         </Text>
 
-        {robots.map((a) => {
-          return <RobotGallery key={a.id} data={a} />;
+        {robots.map((a, index) => {
+          return <RobotGallery key={index} data={a} />;
         })}
         <Text className="text-white text-l font-bold p-3 mx-3 my-4">
           {robotList.length > 0
@@ -65,18 +58,20 @@ export default function Index({ route }) {
             : "You have no subscriptions, please choose robot category from above"}
         </Text>
         <ScrollView>
-          {robotList.map((a) => {
+          {robotList?.map((a, index) => {
             robotId = a.id;
             paymentInfo = paymentList.filter((item) => {
               return item?.robotId == robotId ? true : false;
             });
-            return <UserRobots key={a.robotId} data={a} paymentInfo={paymentInfo[0]} />;
+            if (a != undefined)
+              return <UserRobots key={index} data={a} paymentInfo={paymentInfo[0]} />;
           })}
         </ScrollView>
         <View className="space-y-4">
           <TouchableOpacity
             onPress={() => {
               signUserOut();
+              backHandler?.remove();
               navigation.navigate("Welcome");
             }}
             className="py-3  mx-7 rounded-xl"

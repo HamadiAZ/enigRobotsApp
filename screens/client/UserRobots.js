@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, ImageBackground, BackHandler } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { themeColors } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 export default function UserRobots({
@@ -19,6 +19,13 @@ export default function UserRobots({
   classBorderColor = "flex m-2 border-2 " + (data.payment ? "border-green-800" : "border-rose-900");
   classTextColor =
     "font-bold text-xl ml-3 mt-2 " + (data.payment ? "text-green-800" : "text-rose-900");
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate(navigationEvent, { data, paymentInfo, getCurrentUserRobotList });
+    };
+    backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () => backHandler.remove(); // Clean up the event listener
+  }, [user]);
   return (
     <View
       className={classBorderColor}
@@ -26,6 +33,7 @@ export default function UserRobots({
     >
       <TouchableOpacity
         onPress={() => {
+          backHandler?.remove();
           navigation.navigate(navigationEvent, { data, paymentInfo, getCurrentUserRobotList });
         }}
         style={{ height: 200, width: "100%" }}

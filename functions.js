@@ -24,8 +24,9 @@ export async function getData(path, setFn, filterDict) {
         return { id: doc.id, ...doc.data() };
       });
       //console.log("Current groups in database: ", Data);
-      if (filterDict === undefined) setFn(Data);
-      else {
+      if (filterDict === undefined) {
+        setFn(Data);
+      } else {
         //console.log(Data);
         Data = Data.filter((item) => {
           filterBase = filterDict.base;

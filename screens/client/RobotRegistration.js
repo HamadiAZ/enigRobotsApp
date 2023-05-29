@@ -6,9 +6,10 @@ import {
   TextInput,
   ActivityIndicator,
   ScrollView,
+  BackHandler,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { themeColors } from "../../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
@@ -71,6 +72,13 @@ export default function RobotRegistration({ route }) {
     }
   }
   const navigation = useNavigation();
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+    };
+    backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () => backHandler.remove(); // Clean up the event listener
+  }, [user]);
   return (
     <KeyboardAvoidingComponent>
       <ScrollView className="flex-1 bg-white " style={{ backgroundColor: themeColors.bg }}>
